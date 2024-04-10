@@ -7,21 +7,13 @@ const pool = new Pool({
   port: 5432,
 })
 
-const getUsers = (request, response) => {
-  pool.query('SELECT * FROM users ', (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).json(results.rows)
-  })
-}
-
-const getUserById = (request, response) => {
+//log in page
+const login = (request, response) => {
   const email = request.body.email
   const password = request.body.password
+  console.log(password);
 
   pool.query('SELECT * FROM users WHERE email = $1', [email], (error, results) => {
-    console.log(results);
     try
      {
       if (results.rows.length > 0) {
@@ -33,9 +25,9 @@ const getUserById = (request, response) => {
         } else if(password !== storedPassword ) {
           // Invalid password
           response.status(401).json({ message: 'Invalid password' });
-        } else {
-          response.status(404).json({ message: 'Email not found in the database'});
         } 
+      } else {
+        response.status(404).json({ message: 'Email not found in the database'});
       }
      }
     catch (error){
@@ -45,7 +37,6 @@ const getUserById = (request, response) => {
   })
 }
 // Creating new user
-
 const createUser = (request, response) => {
   const { email, name, password} = request.body
 
@@ -53,7 +44,6 @@ const createUser = (request, response) => {
     if (error) {
       throw error;
     }
-
     if (result.rows.length > 0) {
       // Email already exists in the database, send an error response
       response.status(400).send('Email already exists in the database');
@@ -98,8 +88,7 @@ const deleteUser = (request, response) => {
 }
 
 module.exports = {
-  getUsers,
-  getUserById,
+  login,
   createUser,
   updateUser,
   deleteUser,

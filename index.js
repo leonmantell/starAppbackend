@@ -17,9 +17,9 @@ app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
 })
 
-app.get('/users', db.getUsers)
-app.get('/users/:email', db.getUserById)
-app.post('/users', db.createUser)
+
+app.post('/users/login', db.login)
+app.post('/users/signup', db.createUser)
 app.put('/users/:email', db.updateUser)
 app.delete('/users/:email', db.deleteUser)
 
