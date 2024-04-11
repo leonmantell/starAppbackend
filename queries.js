@@ -9,6 +9,8 @@ const pool = new Pool({
 
 //log in page
 const login = (request, response) => {
+  console.log("Request is coming....................")
+
   const email = request.body.email
   const password = request.body.password
   console.log(password);
@@ -16,6 +18,7 @@ const login = (request, response) => {
   pool.query('SELECT * FROM users WHERE email = $1', [email], (error, results) => {
     try
      {
+      console.log(results.rows)
       if (results.rows.length > 0) {
         // Email found in the database, compare passwords
         const storedPassword = results.rows[0].password;
@@ -46,14 +49,20 @@ const createUser = (request, response) => {
     }
     if (result.rows.length > 0) {
       // Email already exists in the database, send an error response
-      response.status(400).send('Email already exists in the database');
+      response.status(200).send({
+        status: false,
+        msg: 'Email already exists in the database'
+      });
     } else {
       // Email is unique, proceed with inserting the new user data
       pool.query('INSERT INTO users (email, name, password) VALUES ($1, $2, $3)', [email, name, password], (err, results) => {
         if (err) {
           throw err;
         }
-        response.status(201).send(`User added with Email: ${results.email}`);
+        response.status(201).send({
+          status: true,
+          msg: `User added with Email: ${results.email}`
+        });
       });
     }
   });
