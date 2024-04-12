@@ -6,10 +6,36 @@ const pool = new Pool({
   password: '222331',
   port: 5432,
 })
-
+//reset 
+const resetUser = (request, response) => {
+  const email = request.body.email
+ 
+  pool.query('SELECT * FROM users WHERE email = $1', [email], (error, results) => {
+    try
+     {
+  
+      if (results.rows.length > 0) {
+        // Email found in the database, 
+        response.status(200).send({ 
+          status: true,
+          msg: `reset successfully.`
+         });
+        } else{
+          response.status(400).send({
+            status: false,
+            msg: `reset failed.`
+          })
+        }
+      
+     }
+    catch (error){
+      console.error('Error searching for email in the database:', error);
+      response.status(500).json({ message: 'An error occurred while searching for email in the database' });
+    }
+  })
+}
 //log in page
 const login = (request, response) => {
-  console.log("Request is coming....................")
 
   const email = request.body.email
   const password = request.body.password
@@ -24,10 +50,15 @@ const login = (request, response) => {
         const storedPassword = results.rows[0].password;
         if (password === storedPassword) {
           // Password match, sign-in success
-          response.status(200).json({ message: 'Sign-in successful' });
+          response.status(200).send({ 
+            status: true,
+            msg: `Log in successfully.`
+           });
         } else if(password !== storedPassword ) {
           // Invalid password
-          response.status(401).json({ message: 'Invalid password' });
+          response.status(201).send({ 
+            staus: false,
+           msg: `Password is incorrect.`});
         } 
       } else {
         response.status(404).json({ message: 'Email not found in the database'});
@@ -61,7 +92,7 @@ const createUser = (request, response) => {
         }
         response.status(201).send({
           status: true,
-          msg: `User added with Email: ${results.email}`
+          msg: `User added with Email: ${email}`
         });
       });
     }
@@ -101,4 +132,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  resetUser,
 }
