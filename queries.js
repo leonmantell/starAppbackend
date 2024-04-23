@@ -39,11 +39,12 @@ const resetUser = (request, response) => {
   );
 };
 
-//Get users
+//Get Admins
 
-const getUsers = (request, response) => {
+const getAdmin = (request, response) => {
   pool.query("SELECT * FROM users", (error, results) => {
     if (error) {
+      console.error("Error searching for email in the database:", error);
     } else {
       console.log(results.rows);
       response.status(200).send({
@@ -179,6 +180,6 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  getUsers,
+  getAdmin,
   resetUser,
 };

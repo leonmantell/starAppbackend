@@ -18,7 +18,7 @@ app.get("/", (request, response) => {
 });
 
 app.post("/users/reset", db.resetUser);
-app.post("/users/getUsers", db.getUsers);
+app.post("/users/getAdmin", db.getAdmin);
 app.post("/users/login", db.login);
 app.post("/users/signup", db.createUser);
 app.put("/users/:email", db.updateUser);
