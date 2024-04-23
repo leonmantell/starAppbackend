@@ -39,14 +39,13 @@ const resetUser = (request, response) => {
   );
 };
 
-//Get Admins
+//Get users
 
-const getAdmin = (request, response) => {
-  pool.query("SELECT * FROM users", (error, results) => {
+const getUser = (request, response) => {
+  pool.query("SELECT * FROM users where isadmin = false", (error, results) => {
     if (error) {
       console.error("Error searching for email in the database:", error);
     } else {
-      console.log(results.rows);
       response.status(200).send({
         status: true,
         users: results.rows,
@@ -65,15 +64,16 @@ const login = (request, response) => {
     [email],
     (error, results) => {
       try {
-        console.log(results.rows.password);
         if (results.rows.length > 0) {
           const storedPassword = results.rows[0].password;
           if (password === storedPassword) {
             if (results.rows[0].isadmin) {
+              console.log(results.rows[0]);
               response.status(200).send({
                 status: true,
                 isAdmin: true,
-                msg: `Log in successfully.`,
+                userName: results.rows[0].name,
+                msg: `Log in admin.`,
               });
             } else
               response.status(200).send({
@@ -180,6 +180,6 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  getAdmin,
+  getUser,
   resetUser,
 };
