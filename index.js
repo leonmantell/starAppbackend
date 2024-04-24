@@ -23,6 +23,7 @@ app.post("/users/login", db.login);
 app.post("/users/signup", db.createUser);
 app.put("/users/:email", db.updateUser);
 app.delete("/users/:email", db.deleteUser);
+app.post("/users/getinfo", db.getinfo);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

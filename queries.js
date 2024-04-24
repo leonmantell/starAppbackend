@@ -53,6 +53,28 @@ const getUser = (request, response) => {
     }
   });
 };
+//get infor matching email
+const getinfo = (request, response) => {
+  pool.query(
+    "SELECT * FROM users where email = $1",
+    [request.body.email],
+    (error, results) => {
+      if (error) {
+        console.error("Error searching for email in the database:", error);
+      } else {
+        if (results.rows.length > 0) {
+          response.status(200).send({
+            status: true,
+            email: results.rows[0].email,
+            name: results.rows[0].name,
+            isAdmin: results.rows[0].isadmin,
+          });
+        }
+      }
+    }
+  );
+};
+
 //log in page
 
 const login = (request, response) => {
@@ -182,4 +204,5 @@ module.exports = {
   deleteUser,
   getUser,
   resetUser,
+  getinfo,
 };
