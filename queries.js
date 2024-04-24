@@ -1,12 +1,18 @@
 const Pool = require("pg").Pool;
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "myApp",
-  password: "222331",
-  port: 5432,
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DATABASE,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT,
 });
-
+console.log({
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DATABASE,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT,
+});
 //reset
 const resetUser = (request, response) => {
   const email = request.body.email;
@@ -42,7 +48,9 @@ const resetUser = (request, response) => {
 //Get users
 
 const getUser = (request, response) => {
+  console.log(request);
   pool.query("SELECT * FROM users where isadmin = false", (error, results) => {
+    console.log({ error, results });
     if (error) {
       console.error("Error searching for email in the database:", error);
     } else {
@@ -81,10 +89,19 @@ const login = (request, response) => {
   const email = request.body.email;
   const password = request.body.password;
 
+  console.log({ email, password });
+
   pool.query(
     "SELECT * FROM users WHERE email = $1",
     [email],
     (error, results) => {
+      if (error) {
+        console.error(error);
+        response.status(500).json({
+          message:
+            "An error occurred while searching for email in the database",
+        });
+      }
       try {
         if (results.rows.length > 0) {
           const storedPassword = results.rows[0].password;
@@ -115,8 +132,8 @@ const login = (request, response) => {
             .status(404)
             .json({ message: "Email not found in the database" });
         }
-      } catch (error) {
-        console.error("Error searching for email in the database:", error);
+      } catch (error_) {
+        console.error("Error searching for email in the database:", error_);
         response.status(500).json({
           message:
             "An error occurred while searching for email in the database",

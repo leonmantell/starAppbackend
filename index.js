@@ -2,6 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
+const dotenv = require("dotenv");
+dotenv.config();
+
 const db = require("./queries");
 const port = 8000;
 
@@ -19,11 +22,11 @@ app.get("/", (request, response) => {
 
 app.post("/users/reset", db.resetUser);
 app.post("/users/getusers", db.getUser);
+app.post("/users/getinfo", db.getinfo);
 app.post("/users/login", db.login);
 app.post("/users/signup", db.createUser);
 app.put("/users/:email", db.updateUser);
 app.delete("/users/:email", db.deleteUser);
-app.post("/users/getinfo", db.getinfo);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
